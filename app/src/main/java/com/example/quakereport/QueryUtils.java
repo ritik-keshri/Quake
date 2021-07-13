@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +34,7 @@ public final class QueryUtils {
         } catch (IOException e) {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
-        List<Earthquake> earthquake = extractFeaturesFromJson(jsonResponse);
-        return earthquake;
+        return extractFeaturesFromJson(jsonResponse);
     }
 
     //Returns new URL object from the given string URL.
@@ -80,7 +79,7 @@ public final class QueryUtils {
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(inputStreamReader);
             String line = reader.readLine();
             while (line != null) {
@@ -109,13 +108,13 @@ public final class QueryUtils {
             JSONArray earthquakeArray = baseJsonResponse.optJSONArray("features");
 
             for (int i = 0; i < earthquakeArray.length(); i++) {
-                //Itering through each JSON Object that is present in JSON Array
+                //Iterating through each JSON Object that is present in JSON Array
                 JSONObject currentEarthquake = earthquakeArray.getJSONObject(i);
 
-                //Accesing the object to get the value that are required to show
+                //Accessing the object to get the value that are required to show
                 JSONObject properties = currentEarthquake.optJSONObject("properties");
 
-                //Accsing the Values through JSON Object.
+                //Accusing the Values through JSON Object.
                 double mag = properties.optDouble("mag");
                 String place = properties.optString("place");
                 long time = properties.optLong("time");
