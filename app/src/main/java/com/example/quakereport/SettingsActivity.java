@@ -28,6 +28,9 @@ public class SettingsActivity extends AppCompatActivity {
 
             Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
             bindPreferenceSummaryToValue(orderBy);
+
+            Preference maxMagnitude = findPreference(getString(R.string.settings_max_magnitude_key));
+            bindPreferenceSummaryToValue(maxMagnitude);
         }
 
         @Override

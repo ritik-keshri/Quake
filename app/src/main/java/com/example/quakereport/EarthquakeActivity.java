@@ -33,6 +33,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private ProgressBar progressBar;
     private ListView earthquakeListView;
 
+    //For filtrating the Settings in action bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -58,12 +59,12 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         init();
 
         //To check network connection is there or not.
-        ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         // Get details on the currently active default data network
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         boolean isConnected = networkInfo != null && networkInfo.isConnected();
-        if(!isConnected) {
+        if (!isConnected) {
             textView.setText(R.string.no_internet_connection);
             progressBar.setVisibility(View.GONE);
         } else {
@@ -102,9 +103,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle) {
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String minMagnitude = sharedPrefs.getString(getString(R.string.settings_min_magnitude_key),getString(R.string.settings_min_magnitude_default));
 
-        String orderBy = sharedPrefs.getString(getString(R.string.settings_order_by_key),getString(R.string.settings_order_by_default));
+        String minMagnitude = sharedPrefs.getString(getString(R.string.settings_min_magnitude_key), getString(R.string.settings_min_magnitude_default));
+        String maxMagnitude = sharedPrefs.getString(getString(R.string.settings_max_magnitude_key), getString(R.string.settings_max_magnitude_default));
+        String orderBy = sharedPrefs.getString(getString(R.string.settings_order_by_key), getString(R.string.settings_order_by_default));
 
         Uri baseUri = Uri.parse(USGS_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
@@ -113,6 +115,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         uriBuilder.appendQueryParameter("limit", "100");
         uriBuilder.appendQueryParameter("minmag", minMagnitude);
         uriBuilder.appendQueryParameter("orderby", orderBy);
+        uriBuilder.appendQueryParameter("maxmag", maxMagnitude);
 
         return new com.example.quakereport.EarthquakeLoader(this, uriBuilder.toString());
     }
