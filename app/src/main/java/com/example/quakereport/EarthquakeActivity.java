@@ -1,6 +1,6 @@
 package com.example.quakereport;
 
-import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
+public class EarthquakeActivity extends AppCompatActivity implements LoaderCallbacks<List<Earthquake>> {
 
     private static final String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
     private EarthquakeAdapter adapter;
@@ -67,13 +67,11 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         if (!isConnected) {
             textView.setText(R.string.no_internet_connection);
             progressBar.setVisibility(View.GONE);
-        } else {
-            LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
-        }
+        } else
+            getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this);
 
-        adapter = new com.example.quakereport.EarthquakeAdapter(this, new ArrayList<com.example.quakereport.Earthquake>());
 
+        adapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
         earthquakeListView.setAdapter(adapter);
 
         earthquakeListView.setEmptyView(textView);
@@ -94,9 +92,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     }
 
     private void init() {
-        earthquakeListView = (ListView) findViewById(R.id.list);
-        textView = (TextView) findViewById(R.id.text);
-        progressBar = (ProgressBar) findViewById(R.id.loading_spinner);
+        earthquakeListView = findViewById(R.id.list);
+        textView = findViewById(R.id.text);
+        progressBar = findViewById(R.id.loading_spinner);
     }
 
     @Override
@@ -112,12 +110,11 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter("format", "geojson");
-        uriBuilder.appendQueryParameter("limit", "100");
         uriBuilder.appendQueryParameter("minmag", minMagnitude);
         uriBuilder.appendQueryParameter("orderby", orderBy);
         uriBuilder.appendQueryParameter("maxmag", maxMagnitude);
 
-        return new com.example.quakereport.EarthquakeLoader(this, uriBuilder.toString());
+        return new EarthquakeLoader(this, uriBuilder.toString());
     }
 
     //Loader loads the data while List<Earthquake> return the data
